@@ -10,8 +10,23 @@ configDotenv();
 const app = express();
 
 // Enable CORS for the frontend
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://hirebuddy-pv9i.onrender.com'
+];
+
 const corsOptions = {
-  origin: 'http://localhost:5173',
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.indexOf(origin) === -1) {
+      const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+      return callback(new Error(msg), false);
+    }
+    return callback(null, true);
+  },
+  credentials: true,
   optionsSuccessStatus: 200 // For legacy browser support
 };
 
